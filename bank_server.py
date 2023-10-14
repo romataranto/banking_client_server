@@ -18,6 +18,10 @@ ACCT_FILE = "accounts.txt"
 #                                                        #
 ##########################################################
 
+def send_to_client(sock, msg):
+    """ Given an open socket connection (sock) and a string msg, send the string to the server. """
+    return sock.sendall(msg.encode('utf-8'))
+
 def acctNumberIsValid(ac_num):
     """Return True if ac_num represents a valid account number. This does NOT test whether the account actually exists, only
     whether the value of ac_num is properly formatted to be used as an account number.  A valid account number must be a string,
@@ -159,7 +163,7 @@ def run_network_server():
                 # create dictionary of known accounts and check if user account is part of it
                 load_all_accounts()
                 account = get_acct(user_acct)
-                
+
                 # load_all_accounts creates an instance of the BankAccount class for each of the accounts
                 # in the text file. each of these instances have an associated pin number and balance AKA
                 # instance variables such as acct_pin 
@@ -168,10 +172,12 @@ def run_network_server():
 
                 # make sure pin matches account number
                 if account.acct_pin == user_pin:
-                    print("Credentials accepted.")
+                    print("Credentials accepted")
+                    send_to_client(conn, str(True))
                 else:
                     print("Incorrect credentials provided.")
-                
+                    send_to_client(conn, str(False))
+                    
 
         print("Bank server network functions not implemented!!")
         return

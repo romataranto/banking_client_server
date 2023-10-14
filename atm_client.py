@@ -28,13 +28,20 @@ def get_from_server(sock):
 
 def login_to_server(sock, acct_num, pin):
     """ Attempt to login to the bank server. Pass acct_num and pin, get response, parse and check whether login was successful. """
-    validated = 0
+     # TODO: Write this code!
+    #validated = 0
 
     send_to_server(sock, acct_num + "," + pin)
+    validation_status = get_from_server(sock)
 
-
-    # TODO: Write this code!
-    return True
+    if validation_status == "True":
+        return True
+    elif validation_status == "False":
+        print("Pin does not match account number")
+        return False
+    else:
+        print("Validation process error")
+        return False
 
 # moved from bank server, makes more sense to check format validity before sending to server
 def acctNumberIsValid(ac_num):
@@ -73,6 +80,9 @@ def process_deposit(sock, acct_num):
     bal = get_acct_balance(sock, acct_num)
     amt = input("How much would you like to deposit? (You have ${bal} available)")
     # TODO communicate with the server to request the deposit, check response for success or failure.
+    
+    
+    
     print("Deposit transaction completed.")
     return
 
