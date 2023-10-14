@@ -29,13 +29,43 @@ def get_from_server(sock):
 def login_to_server(sock, acct_num, pin):
     """ Attempt to login to the bank server. Pass acct_num and pin, get response, parse and check whether login was successful. """
     validated = 0
+
+    send_to_server(sock, acct_num + "," + pin)
+
+
     # TODO: Write this code!
-    return validated
+    return True
+
+# moved from bank server, makes more sense to check format validity before sending to server
+def acctNumberIsValid(ac_num):
+    """Return True if ac_num represents a valid account number. This does NOT test whether the account actually exists, only
+    whether the value of ac_num is properly formatted to be used as an account number.  A valid account number must be a string,
+    lenth = 8, and match the format AA-NNNNN where AA are two alphabetic characters and NNNNN are five numeric characters."""
+    return isinstance(ac_num, str) and \
+        len(ac_num) == 8 and \
+        ac_num[2] == '-' and \
+        ac_num[:2].isalpha() and \
+        ac_num[3:8].isdigit()
+
+# moved from bank server, makes more sense to check format validity before sending to server
+def acctPinIsValid(pin):
+    """Return True if pin represents a valid PIN number. A valid PIN number is a four-character string of only numeric characters."""
+    return (isinstance(pin, str) and \
+        len(pin) == 4 and \
+        pin.isdigit())
 
 def get_login_info():
-    """ Get info from customer. TODO: Validate inputs, ask again if given invalid input. """
+    """ Get info from customer. DONE TODO: Validate inputs, ask again if given invalid input. """
     acct_num = input("Please enter your account number: ")
+    while not acctNumberIsValid(acct_num):
+        acct_num = input("Invalid input. Please enter your account number of the form AA-NNNNN where AA are two alphabetic characters and NNNNN are five numeric characters: ")
+        acctNumberIsValid(acct_num)
+
     pin = input("Please enter your four digit PIN: ")
+    while not acctPinIsValid(pin):
+        pin = str(input("Invalid input. Please enter your four digit PIN: "))
+        acctPinIsValid(pin)
+
     return acct_num, pin
 
 def process_deposit(sock, acct_num):

@@ -140,8 +140,41 @@ def load_all_accounts(acct_file = "accounts.txt"):
 
 def run_network_server():
     """ This and all supporting code needs to be written! """
-    print("Bank server network functions not implemented!!")
-    return
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind((HOST, PORT))
+        s.listen()
+        conn, addr = s.accept()
+        with conn:
+            print(f"Connection established with {addr}")
+            while True:
+                data = conn.recv(1024)
+                if not data:
+                    break
+
+                # decoding incoming data from bytes to a string and separate account and pin numbers
+                acct_and_pin = data.decode('utf-8')
+                user_acct = acct_and_pin.split(",")[0]
+                user_pin = acct_and_pin.split(",")[1]
+
+                # create dictionary of known accounts and check if user account is part of it
+                load_all_accounts()
+                account = get_acct(user_acct)
+                
+                # load_all_accounts creates an instance of the BankAccount class for each of the accounts
+                # in the text file. each of these instances have an associated pin number and balance AKA
+                # instance variables such as acct_pin 
+
+                print(account.acct_pin)
+
+                # make sure pin matches account number
+                if account.acct_pin == user_pin:
+                    print("Credentials accepted.")
+                else:
+                    print("Incorrect credentials provided.")
+                
+
+        print("Bank server network functions not implemented!!")
+        return
 
 ##########################################################
 #                                                        #
