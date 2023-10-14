@@ -61,6 +61,11 @@ def acctPinIsValid(pin):
         len(pin) == 4 and \
         pin.isdigit())
 
+def amountIsValid(amount):
+    """Return True if amount represents a valid amount for banking transactins. For an amount to be valid it must be a positive float()
+    value with at most two decimal places."""
+    return isinstance(amount, float) and (round(amount, 2) == amount) and (amount >= 0)
+
 def get_login_info():
     """ Get info from customer. DONE TODO: Validate inputs, ask again if given invalid input. """
     acct_num = input("Please enter your account number: ")
@@ -80,8 +85,20 @@ def process_deposit(sock, acct_num):
     bal = get_acct_balance(sock, acct_num)
     amt = input("How much would you like to deposit? (You have ${bal} available)")
     # TODO communicate with the server to request the deposit, check response for success or failure.
-    
-    
+
+    while not amountIsValid(amt):
+        amt = input("Invalid deposit amount. Please input correct amount: ")
+        amountIsValid(amt)
+
+
+
+
+
+
+
+
+
+        
     
     print("Deposit transaction completed.")
     return
