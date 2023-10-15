@@ -134,6 +134,15 @@ def load_all_accounts(acct_file = "accounts.txt"):
     print("finished loading account data")
     return True
 
+def validate_pin(conn, account, user_pin):
+    # make sure pin matches account number
+    if account.acct_pin == user_pin:
+        print("Credentials accepted")
+        send_to_client(conn, str(True))
+    else:
+        print("Incorrect credentials provided.")
+        send_to_client(conn, str(False))
+
 ##########################################################
 #                                                        #
 # Bank Server Network Operations                         #
@@ -155,28 +164,28 @@ def run_network_server():
                 if not data:
                     break
 
-                # decoding incoming data from bytes to a string and separate account and pin numbers
-                acct_and_pin = data.decode('utf-8')
-                user_acct = acct_and_pin.split(",")[0]
-                user_pin = acct_and_pin.split(",")[1]
-
                 # create dictionary of known accounts and check if user account is part of it
                 load_all_accounts()
-                account = get_acct(user_acct)
 
                 # load_all_accounts creates an instance of the BankAccount class for each of the accounts
                 # in the text file. each of these instances have an associated pin number and balance AKA
                 # instance variables such as acct_pin 
 
-                print(account.acct_pin)
+                # decoding incoming data from bytes to a string and separate account and pin numbers
+                acct_and_pin = data.decode('utf-8')
+                user_acct = acct_and_pin.split(",")[0]
+                user_pin = acct_and_pin.split(",")[1]
+                
+                # finding account in database
+                account = get_acct(user_acct)
 
-                # make sure pin matches account number
-                if account.acct_pin == user_pin:
-                    print("Credentials accepted")
-                    send_to_client(conn, str(True))
-                else:
-                    print("Incorrect credentials provided.")
-                    send_to_client(conn, str(False))
+                #validating that pin and account number match, sending confirmation to client
+                validate_pin(conn, account, user_pin)
+
+                #incoming data = operation
+                client_request = data.decode('utf-8')
+                
+                #TODO here: accept operation type and send back current balance
                     
 
         print("Bank server network functions not implemented!!")

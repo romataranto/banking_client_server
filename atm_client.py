@@ -87,7 +87,7 @@ def process_deposit(sock, acct_num):
     # TODO communicate with the server to request the deposit, check response for success or failure.
 
     while not amountIsValid(amt):
-        amt = input("Invalid deposit amount. Please input correct amount: ")
+        amt = float(input("Invalid deposit amount. Please input correct amount: "))
         amountIsValid(amt)
 
 
@@ -98,7 +98,7 @@ def process_deposit(sock, acct_num):
 
 
 
-        
+
     
     print("Deposit transaction completed.")
     return
@@ -106,6 +106,9 @@ def process_deposit(sock, acct_num):
 def get_acct_balance(sock, acct_num):
     """ TODO: Ask the server for current account balance. """
     bal = 0.0
+
+    
+
     # TODO code needed here, to get balance from server then return it
     return bal
 
