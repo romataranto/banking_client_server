@@ -143,6 +143,9 @@ def validate_pin(conn, account, user_pin):
         print("Incorrect credentials provided.")
         send_to_client(conn, str(False))
 
+def send_balance_to_client(conn, account):
+    send_to_client(conn, str(account.acct_balance))
+
 ##########################################################
 #                                                        #
 # Bank Server Network Operations                         #
@@ -183,9 +186,22 @@ def run_network_server():
                 validate_pin(conn, account, user_pin)
 
                 #incoming data = operation
-                client_request = data.decode('utf-8')
+                #client_request = data.decode('utf-8')
                 
                 #TODO here: accept operation type and send back current balance
+
+                # returning balance
+                #account_num = data.decode('utf-8')
+
+                send_balance_to_client(conn, account)
+
+                deposit_amount = data.decode('utf-8')
+
+                account.deposit()
+
+                
+
+
                     
 
         print("Bank server network functions not implemented!!")
