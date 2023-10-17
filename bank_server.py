@@ -195,9 +195,12 @@ def run_network_server():
 
                 send_balance_to_client(conn, account)
 
-                deposit_amount = data.decode('utf-8')
+                data2 = conn.recv(1024)
+                deposit_amount = data2.decode('utf-8')
 
-                account.deposit()
+                account.deposit(deposit_amount)
+
+                send_balance_to_client(conn, account)
 
                 
 
