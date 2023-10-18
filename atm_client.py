@@ -82,7 +82,7 @@ def get_login_info():
 
 def process_deposit(sock, acct_num):
     """ TODO: Write this code. """
-    bal = get_acct_balance(sock, acct_num)
+    bal = get_acct_balance(sock)
     amt = float(input(f"How much would you like to deposit? (You have ${bal} available)"))
     # TODO communicate with the server to request the deposit, check response for success or failure.
 
@@ -90,7 +90,7 @@ def process_deposit(sock, acct_num):
         amt = float(input("Invalid deposit amount. Please input correct amount: "))
         amountIsValid(amt)
 
-    # sends deposit amounnt to the server
+    # sends deposit amount to the server
     send_to_server(sock, str(amt))
 
     # server makes the deposit and returns the new balance

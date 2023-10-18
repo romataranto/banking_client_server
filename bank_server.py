@@ -195,8 +195,12 @@ def run_network_server():
 
                 send_balance_to_client(conn, account)
 
+                
                 data2 = conn.recv(1024)
-                deposit_amount = data2.decode('utf-8')
+                deposit_amount = float(data2.decode('utf-8'))
+                #transaction_type = data2.decode('utf-8').split[1]
+
+                #print(transaction_type)
 
                 account.deposit(deposit_amount)
 
