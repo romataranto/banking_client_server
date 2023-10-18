@@ -82,8 +82,10 @@ def get_login_info():
 
 def process_deposit(sock, acct_num):
     """ TODO: Write this code. """
+    send_to_server(sock, "d") # send transaction type
+    print("HERE")
     bal = get_acct_balance(sock)
-    amt = float(input(f"How much would you like to deposit? (You have ${bal} available)"))
+    amt = float(input(f"You have ${bal} available. How much would you like to deposit? $"))
     # TODO communicate with the server to request the deposit, check response for success or failure.
 
     while not amountIsValid(amt):
@@ -102,15 +104,30 @@ def process_deposit(sock, acct_num):
 def get_acct_balance(sock):
     """ DONE TODO: Ask the server for current account balance. """
     bal = 0.0
+    print(bal)
     bal = get_from_server(sock)
+    print(bal)
     return bal
 
 def process_withdrawal(sock, acct_num):
     """ TODO: Write this code. """
-    bal = get_acct_balance(sock, acct_num)
-    amt = float(input(f"How much would you like to withdraw? (You have ${bal} available)"))
+    send_to_server(sock, "w") # send transaction type
+    bal = get_acct_balance(sock)
+    amt = float(input(f"You have ${bal} available. How much would you like to withdraw? $"))
     # TODO communicate with the server to request the withdrawal, check response for success or failure.
-    print("Withdrawal transaction completed.")
+
+    while not amountIsValid(amt):
+        amt = float(input("Invalid withdrawal amount. Please input correct amount: "))
+        amountIsValid(amt)
+
+    # sends withdrawal amount to the server
+    send_to_server(sock, str(amt))
+
+    # server makes the deposit and returns the new balance
+    new_bal = get_from_server(sock)
+    #new_bal = round(raw_bal, 2)
+    
+    print(f"Withdrawal transaction completed. You now have ${new_bal} in your account.")
     return
 
 def process_customer_transactions(sock, acct_num):
@@ -118,6 +135,7 @@ def process_customer_transactions(sock, acct_num):
     while True:
         print("Select a transaction. Enter 'd' to deposit, 'w' to withdraw, or 'x' to exit.")
         req = input("Your choice? ").lower()
+        #send_to_server(sock, req)
         if req not in ('d', 'w', 'x'):
             print("Unrecognized choice, please try again.")
             continue

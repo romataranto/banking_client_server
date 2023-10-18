@@ -156,6 +156,7 @@ def send_balance_to_client(conn, account):
 
 def run_network_server():
     """ This and all supporting code needs to be written! """
+    x = 0 # init counter variable
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((HOST, PORT))
         s.listen()
@@ -167,46 +168,50 @@ def run_network_server():
                 if not data:
                     break
 
-                # create dictionary of known accounts and check if user account is part of it
-                load_all_accounts()
+                # this should only run once per user
+                if x == 0:
+                    # create dictionary of known accounts and check if user account is part of it
+                    load_all_accounts()
 
-                # load_all_accounts creates an instance of the BankAccount class for each of the accounts
-                # in the text file. each of these instances have an associated pin number and balance AKA
-                # instance variables such as acct_pin 
+                    # load_all_accounts creates an instance of the BankAccount class for each of the accounts
+                    # in the text file. each of these instances have an associated pin number and balance AKA
+                    # instance variables such as acct_pin 
 
-                # decoding incoming data from bytes to a string and separate account and pin numbers
-                acct_and_pin = data.decode('utf-8')
-                user_acct = acct_and_pin.split(",")[0]
-                user_pin = acct_and_pin.split(",")[1]
-                
-                # finding account in database
-                account = get_acct(user_acct)
+                    # decoding incoming data from bytes to a string and separate account and pin numbers
+                    acct_and_pin = data.decode('utf-8')
+                    user_acct = acct_and_pin.split(",")[0]
+                    user_pin = acct_and_pin.split(",")[1]
+                    
+                    # finding account in database
+                    account = get_acct(user_acct)
 
-                #validating that pin and account number match, sending confirmation to client
-                validate_pin(conn, account, user_pin)
+                    #validating that pin and account number match, sending confirmation to client
+                    validate_pin(conn, account, user_pin)
+                    x += 1
 
-                #incoming data = operation
-                #client_request = data.decode('utf-8')
                 
                 #TODO here: accept operation type and send back current balance
 
-                # returning balance
-                #account_num = data.decode('utf-8')
+                # client sending transaction type to server
+                print("HERE")
+                data3 = conn.recv(1024)
+                transaction_type = data3.decode('utf-8')
+                print(transaction_type)
 
-                send_balance_to_client(conn, account)
+                # 
+                if transaction_type == 'd':
+                    send_balance_to_client(conn, account)
+                    data2 = conn.recv(1024)
+                    deposit_amount = float(data2.decode('utf-8'))
+                    account.deposit(deposit_amount)
+                    send_balance_to_client(conn, account)
 
-                
-                data2 = conn.recv(1024)
-                deposit_amount = float(data2.decode('utf-8'))
-                #transaction_type = data2.decode('utf-8').split[1]
-
-                #print(transaction_type)
-
-                account.deposit(deposit_amount)
-
-                send_balance_to_client(conn, account)
-
-                
+                elif transaction_type == "w":
+                    send_balance_to_client(conn, account)
+                    data2 = conn.recv(1024)
+                    withdraw_amount = float(data2.decode('utf-8'))
+                    account.withdraw(withdraw_amount)
+                    send_balance_to_client(conn, account)
 
 
                     
