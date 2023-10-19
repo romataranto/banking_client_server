@@ -83,7 +83,7 @@ def get_login_info():
 def process_deposit(sock, acct_num):
     """ TODO: Write this code. """
     send_to_server(sock, "d") # send transaction type
-    print("HERE")
+    #print("HERE")
     bal = get_acct_balance(sock)
     amt = float(input(f"You have ${bal} available. How much would you like to deposit? $"))
     # TODO communicate with the server to request the deposit, check response for success or failure.
@@ -97,16 +97,21 @@ def process_deposit(sock, acct_num):
 
     # server makes the deposit and returns the new balance
     new_bal = get_from_server(sock)
+    deposit_success = get_from_server(sock)
     
-    print(f"Deposit transaction completed. You now have ${new_bal} in your account.")
+    if deposit_success == "0":
+        print(f"Deposit transaction completed. You now have ${new_bal} in your account.")
+    else:
+        print(f"Deposit unsuccessful. Your balance is still ${new_bal}.")
     return
+    
 
 def get_acct_balance(sock):
     """ DONE TODO: Ask the server for current account balance. """
     bal = 0.0
-    print(bal)
+    #print(bal)
     bal = get_from_server(sock)
-    print(bal)
+    #print(bal)
     return bal
 
 def process_withdrawal(sock, acct_num):
@@ -125,9 +130,12 @@ def process_withdrawal(sock, acct_num):
 
     # server makes the deposit and returns the new balance
     new_bal = get_from_server(sock)
-    #new_bal = round(raw_bal, 2)
+    deposit_success = get_from_server(sock)
     
-    print(f"Withdrawal transaction completed. You now have ${new_bal} in your account.")
+    if deposit_success == "0":
+        print(f"Withdrawal transaction completed. You now have ${new_bal} in your account.")
+    else:
+        print(f"Withdrawal unsuccessful. Your balance is still ${new_bal}.")
     return
 
 def process_customer_transactions(sock, acct_num):

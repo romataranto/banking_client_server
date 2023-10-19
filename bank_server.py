@@ -84,7 +84,8 @@ class BankAccount:
         else:
             # all checks out, subtract amount from the balance
             self.acct_balance -= amount
-        return self, result_code, round(self.acct_balance,2)
+            self.acct_balance = round(self.acct_balance,2)
+        return self, result_code, self.acct_balance
 
 def get_acct(acct_num):
     """ Lookup acct_num in the ALL_ACCOUNTS database and return the account object if it's found.
@@ -189,29 +190,32 @@ def run_network_server():
                 #TODO here: accept operation type and send back current balance
 
                 # client sending transaction type to server
-                print("HERE")
+                #print("HERE")
                 #if not data:
                 #    break
                 data3 = conn.recv(1024)
                 if not data3:
                     break
                 transaction_type = data3.decode('utf-8')
-                print(transaction_type)
+                #print(transaction_type)
 
                 # 
                 if transaction_type == 'd':
                     send_balance_to_client(conn, account)
                     data2 = conn.recv(1024)
                     deposit_amount = float(data2.decode('utf-8'))
-                    account.deposit(deposit_amount)
+                    result = account.deposit(deposit_amount)
+                    #print(result)
                     send_balance_to_client(conn, account)
+                    send_to_client(conn, str(result[1])) #success of deposit, 0 = success
 
                 elif transaction_type == "w":
                     send_balance_to_client(conn, account)
                     data2 = conn.recv(1024)
                     withdraw_amount = float(data2.decode('utf-8'))
-                    account.withdraw(withdraw_amount)
+                    result = account.withdraw(withdraw_amount)
                     send_balance_to_client(conn, account)
+                    send_to_client(conn, str(result[1])) 
                 
                 
 
