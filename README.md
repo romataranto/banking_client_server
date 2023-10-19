@@ -1,3 +1,31 @@
+# STATUS REPORT
+
+### (a) Design Requirements
+I met the following design requirements:
+- MUST run in its own computing process (i.e., in a dedicated terminal window).
+- MUST communicate with ATM clients exclusively by sending and receiving messages over the network using an application-layer message protocol of your own design.
+- MUST validate an account's PIN code before allowing any other transactions to be performed on that account.
+- MUST transmit error results to the client using numeric codes rather than literal message strings.
+- After a customer "logs in" to their account from an ATM client, the server MUST allow any number of transactions to be performed during that client banking session. 
+- The bank server MAY generate console output for tracing and debugging purposes.
+- The bank server MUST NOT assume that any customer has access to the server's console.
+
+I did not meet the following design requirements:
+- MUST allow multiple simultaneous ATM client connections.
+- MUST allow multiple ATM clients to send messages to the server and receive timely responses from the server. One client should never be blocked until other client(s) have completed all their transactions.
+- MUST prevent more than one ATM client at a time from accessing a bank account and performing transactions on it.
+- During the session, access to the account from other ATM clients MUST be rejected.
+- MUST prevent malicious client applications (i.e., other than the implemented ATM client application) from being able to send messages to the server which cause the server to crash, behave incorrectly, and/or provide unauthorized access to customer bank accounts.
+
+### (b) Knowledge Gaps
+1. I’m not sure how to have multiple clients connecting to the server. I didn’t have time to attempt this, so I’m not sure how difficult it is to get this to work, but I also have no idea where to start with this. I know that there is information on the tutorial about this, and I plan on working through that, but I feel like a little more guidance could be helpful. I do really enjoy struggling and figuring things out for myself (the engineering major in me), but I feel like this is a little too far.
+2. Getting used to using classes has taken a lot of time for me. For example, referencing the instance variables outside the class was something that wasn’t intuitive for me, since Python is a little rusty. However, I feel more comfortable with this now.
+3. I’m not sure what the best way to be coding this is. I feel like I’m possibly brute-forcing a lot of this in a really un-delicate way and I don’t like doing that, but am unsure how to do this otherwise. This isn’t really code that I’m proud of.
+
+### (c) Overcoming Knowledge Gaps
+I need to go to office hours because I need help coming up with a game plan of what to code next. I jumped in by starting with the log-on validation, and then got deposits and withdrawals to work (as many times as the client wants). But, I haven’t done anything with multiple connections and I’m not sure where to start with adding that in. I would also like to say that what I have worked on thus far has taken so many hours, partially because I needed time to understand the code that was already written. Jumping into somebody else’s half written (and decently long) code is not easy. This also meant that debugging was extremely time consuming. Thus, to overcome my knowledge gaps, office hours and TA hours would be helpful. Mostly though, I just need more time.
+
+
 # CSC 249 – Project 2 – ATM client with multi-client back-end banking server
 
 In this project you will build a distributed ATM banking application. This application consists of two separate software programs: (1) a bank server, which holds all bank account records and handles all financial transactions; and (2) an Automated Teller Machine client, which obtains needed inputs from the customer but otherwise relies on the server to perform transaction processing.
