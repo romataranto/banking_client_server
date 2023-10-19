@@ -164,11 +164,7 @@ def run_network_server():
         with conn:
             print(f"Connection established with {addr}")
             while True:
-                data = conn.recv(1024)
-                if not data:
-                    break
-
-                # this should only run once per user
+                # everything in the following "if" should only run once per user
                 if x == 0:
                     # create dictionary of known accounts and check if user account is part of it
                     load_all_accounts()
@@ -178,6 +174,7 @@ def run_network_server():
                     # instance variables such as acct_pin 
 
                     # decoding incoming data from bytes to a string and separate account and pin numbers
+                    data = conn.recv(1024)
                     acct_and_pin = data.decode('utf-8')
                     user_acct = acct_and_pin.split(",")[0]
                     user_pin = acct_and_pin.split(",")[1]
@@ -189,12 +186,15 @@ def run_network_server():
                     validate_pin(conn, account, user_pin)
                     x += 1
 
-                
                 #TODO here: accept operation type and send back current balance
 
                 # client sending transaction type to server
                 print("HERE")
+                #if not data:
+                #    break
                 data3 = conn.recv(1024)
+                if not data3:
+                    break
                 transaction_type = data3.decode('utf-8')
                 print(transaction_type)
 
@@ -212,8 +212,10 @@ def run_network_server():
                     withdraw_amount = float(data2.decode('utf-8'))
                     account.withdraw(withdraw_amount)
                     send_balance_to_client(conn, account)
+                
+                
 
-
+                
                     
 
         print("Bank server network functions not implemented!!")
