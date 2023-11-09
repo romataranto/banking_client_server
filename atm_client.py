@@ -3,9 +3,9 @@
 # Automated Teller Machine (ATM) client application.
 
 import socket
-# import sys
-# import selectors
-# import types
+import sys
+import selectors
+import types
 
 HOST = "127.0.0.1"      # The bank server's IP address
 PORT = 65432            # The port used by the bank server
