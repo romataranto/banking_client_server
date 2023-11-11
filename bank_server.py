@@ -148,10 +148,10 @@ def validate_pin(conn, account, user_pin):
     # make sure pin matches account number
     if account.acct_pin == user_pin:
         print("Credentials accepted")
-        send_to_client(conn, str(True))
+        send_to_client(conn, str("03")) #03 = authentication succeeded
     else:
         print("Incorrect credentials provided.")
-        send_to_client(conn, str(False))
+        send_to_client(conn, str("04")) #04 - authentication failed
 
 def send_balance_to_client(conn, account):
     send_to_client(conn, str(account.acct_balance))
@@ -201,32 +201,38 @@ def run_network_server():
                 #TODO here: accept operation type and send back current balance
 
                 # client sending transaction type to server
-                #print("HERE")
+                print("HERE")
                 #if not data:
                 #    break
                 data3 = conn.recv(1024)
                 if not data3:
                     break
-                transaction_type = data3.decode('utf-8')
+
+                transaction_request = data3.decode('utf-8')
+                print(transaction_request)
+                transaction = transaction_request.split(",")[0]
+                print(transaction)
+                amount = transaction_request.split(",")[1]
+                print(amount)
                 #print(transaction_type)
 
                 # 
-                if transaction_type == 'd':
-                    send_balance_to_client(conn, account)
-                    data2 = conn.recv(1024)
-                    deposit_amount = float(data2.decode('utf-8'))
-                    result = account.deposit(deposit_amount)
+                if transaction == 'd':
+                    #send_balance_to_client(conn, account)
+                    #data2 = conn.recv(1024)
+                    #deposit_amount = float(data2.decode('utf-8'))
+                    result = account.deposit(amount)
                     #print(result)
-                    send_balance_to_client(conn, account)
-                    send_to_client(conn, str(result[1])) #success of deposit, 0 = success
+                    #send_balance_to_client(conn, account)
+                    send_to_client(conn, str(result[1] + "," + result[2])) #success of deposit, 0 = success plus updated balance
 
-                elif transaction_type == "w":
-                    send_balance_to_client(conn, account)
-                    data2 = conn.recv(1024)
-                    withdraw_amount = float(data2.decode('utf-8'))
-                    result = account.withdraw(withdraw_amount)
-                    send_balance_to_client(conn, account)
-                    send_to_client(conn, str(result[1])) 
+                elif transaction == "w":
+                    #send_balance_to_client(conn, account)
+                    #data2 = conn.recv(1024)
+                    #withdraw_amount = float(data2.decode('utf-8'))
+                    result = account.withdraw(amount)
+                    #send_balance_to_client(conn, account)
+                    send_to_client(conn, str(result[1] + "," + result[2])) 
                 
                 
 

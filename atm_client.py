@@ -21,24 +21,6 @@ PORT = 65432            # The port used by the bank server
 #                                                        #
 ##########################################################
 
-# def start_connections(host, port, num_conns):
-#     server_addr = (host, port)
-#     for i in range(0, num_conns):
-#         connid = i + 1
-#         print(f"Starting connection {connid} to {server_addr}")
-#         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#         sock.setblocking(False)
-#         sock.connect_ex(server_addr)
-#         events = selectors.EVENT_READ | selectors.EVENT_WRITE
-#         data = types.SimpleNamespace(
-#             connid=connid,
-#             msg_total=sum(len(m) for m in messages),
-#             recv_total=0,
-#             messages=messages.copy(),
-#             outb=b"",
-#         )
-#         sel.register(sock, events, data=data)
-
 
 def send_to_server(sock, msg):
     """ Given an open socket connection (sock) and a string msg, send the string to the server. """
@@ -59,9 +41,9 @@ def login_to_server(sock, acct_num, pin):
     send_to_server(sock, acct_num + "," + pin)
     validation_status = get_from_server(sock)
 
-    if validation_status == "True":
+    if validation_status == "03":
         return True
-    elif validation_status == "False":
+    elif validation_status == "04":
         print("Pin does not match account number")
         return False
     else:
@@ -107,10 +89,10 @@ def get_login_info():
 
 def process_deposit(sock, acct_num):
     """ TODO: Write this code. """
-    send_to_server(sock, "d") # send transaction type
+    #send_to_server(sock, "d") # send transaction type
     #print("HERE")
-    bal = get_acct_balance(sock)
-    amt = float(input(f"You have ${bal} available. How much would you like to deposit? $"))
+    #bal = get_acct_balance(sock)
+    amt = float(input(f"How much would you like to deposit? $"))
     # TODO communicate with the server to request the deposit, check response for success or failure.
 
     while not amountIsValid(amt):
@@ -118,11 +100,15 @@ def process_deposit(sock, acct_num):
         amountIsValid(amt)
 
     # sends deposit amount to the server
-    send_to_server(sock, str(amt))
+    print("HERE")
+    send_to_server(sock, str("d," + amt))
 
     # server makes the deposit and returns the new balance
-    new_bal = get_from_server(sock)
-    deposit_success = get_from_server(sock)
+    #new_bal = get_from_server(sock)
+    result = get_from_server(sock)
+    print(result)
+    deposit_success = result.split(",")[0]
+    new_bal = result.split(",")[1]
     
     if deposit_success == "0":
         print(f"Deposit transaction completed. You now have ${new_bal} in your account.")
